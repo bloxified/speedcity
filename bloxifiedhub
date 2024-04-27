@@ -1,0 +1,53 @@
+local function collectOrbs()
+    local trillionaireOrbsFolder = game:GetService("Workspace").TrillionaireCity.TrillionaireOrbs
+    if trillionaireOrbsFolder then
+        local orbs = trillionaireOrbsFolder:GetChildren()
+        local orbCollected = false
+        for _, orb in ipairs(orbs) do
+            local outside = orb:FindFirstChild("Outside")
+            if orb.Name == "Trillionaire" and outside then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(outside.Position)
+                wait(1) -- Adjust the wait time between each teleport (in seconds)
+                orb:Destroy()
+                orbCollected = true
+                break
+            end
+        end
+        if not orbCollected then
+            print("No Trillionaire orbs found! Teleporting to a new server...")
+            local success, errorMsg = pcall(function()
+                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId)
+            end)
+            if not success then
+                warn("Failed to teleport to a new server: " .. errorMsg)
+            else
+                return -- Return here to prevent further execution in this iteration
+            end
+        end
+    else
+        print("TrillionaireOrbs folder not found ❌")
+    end
+    wait(1) -- Adjust the wait time before collecting the next orb (in seconds)
+    collectOrbs()
+end
+
+local function startCollection()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1841, 216, 5961)
+    wait(1) -- Wait for 1 second before collecting orbs
+    collectOrbs()
+end
+
+startCollection()
+
+-- Listen for the player rejoining
+game:GetService("Players").PlayerAdded:Connect(function(player)
+    if player == game.Players.LocalPlayer then
+        startCollection()
+    end
+end)
+
+-- Queue a script to run after teleporting
+game:GetService("TeleportService").TeleportInit:Connect(function()
+    game:GetService("TeleportService").TeleportInit:Wait()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/sandwichk/RobloxScripts/main/Scripts/BadWare/Dupe/AFSim", true))()
+end)

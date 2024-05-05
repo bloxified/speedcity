@@ -1,0 +1,33 @@
+local function collectOrbs()
+    local foldersToCollect = {
+        game:GetService("Workspace").EliteCity.MegaOrbs
+    }
+    
+    for _, folder in ipairs(foldersToCollect) do
+        if folder then
+            local orbs = folder:GetChildren()
+            for _, orb in ipairs(orbs) do
+                local outside = orb:FindFirstChild("Outside")
+                if outside then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(outside.Position)
+                    wait(0.1) -- Adjust the wait time between each teleport (in seconds)
+                    orb:Destroy()
+                    break
+                end
+            end
+        else
+            print(folder.Name .. " folder not found ❌")
+        end
+    end
+end
+
+local function startCollection()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1841, 216, 5961)
+    wait(1) -- Wait for 1 second before collecting orbs
+    while true do
+        collectOrbs()
+        wait(0.1) -- Adjust the wait time before collecting the next orb (in seconds)
+    end
+end
+
+startCollection()

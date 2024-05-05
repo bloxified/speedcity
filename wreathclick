@@ -1,0 +1,6 @@
+local wreath = game:GetService("Workspace").Wreath.ClickDetector
+while true do
+    fireclickdetector(wreath)
+    print("Clicked the Wreath!")
+    wait(0.1)
+end

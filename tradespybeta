@@ -1,0 +1,123 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+-- Function to get player username
+local function getUsername(playerId)
+    local player = Players:GetPlayerByUserId(playerId)
+    return player and player.Name or "Unknown"
+end
+
+-- Function to check the TradeSession folder
+local function checkTradeSessionFolder(tradeSessionFolder)
+    local player1Trading = tradeSessionFolder:FindFirstChild("Player1Trading")
+    local player2Trading = tradeSessionFolder:FindFirstChild("Player2Trading")
+
+    local player1 = "Player Sent"
+    local player2 = "Player Accepted"
+
+    -- Check if there's a trade request
+    local tradeRequest = tradeSessionFolder:FindFirstChild("TradeRequest")
+    if tradeRequest then
+        local senderId = tradeRequest.Value
+        player1 = getUsername(senderId)
+        print("📩 Trade request from " .. player1 .. " received.")
+    end
+
+    -- Check if there's a trade accept
+    local tradeAccept = tradeSessionFolder:FindFirstChild("TradeAccept")
+    if tradeAccept then
+        local receiverId = tradeAccept.Value
+        player2 = getUsername(receiverId)
+        print("📩 Trade request from " .. player1 .. " accepted by " .. player2 .. ".")
+    end
+
+    local player1Trades = player1Trading and player1Trading:GetChildren() or {}
+    if #player1Trades > 0 then
+        print("👤 " .. player1 .. "'s Trails:")
+        for _, trade in ipairs(player1Trades) do
+            print("🛒 Trail Added: " .. trade.Name)
+        end
+    else
+        print("❌ No items found in " .. player1 .. "'s trading folder.")
+    end
+
+    local player2Trades = player2Trading and player2Trading:GetChildren() or {}
+    if #player2Trades > 0 then
+        print("👤 " .. player2 .. "'s Trails:")
+        for _, trade in ipairs(player2Trades) do
+            print("🛒 Trail Added: " .. trade.Name)
+        end
+    else
+        print("❌ No items found in " .. player2 .. "'s trading folder.")
+    end
+
+    print("-------")
+end
+
+-- Function to check TradeSessions
+local function checkTradeSessions()
+    local tradeSessions = Workspace.TradeSessions:GetChildren()
+    if #tradeSessions == 0 then
+        print("❌ No ongoing trades.")
+    else
+        for i, sessionFolder in ipairs(tradeSessions) do
+            print("🔍 Checking TradeSession" .. i .. " folder...")
+            checkTradeSessionFolder(sessionFolder)
+        end
+    end
+end
+
+-- Function to initialize the Trade Spy Script
+local function initializeTradeSpyScript()
+    game:GetService('TestService'):Message("👾 Initializing Trade Spy Script..")
+    wait(5)
+    game:GetService('TestService'):Message("🚀 Trade Spy Script Initialized!")
+    wait(2.5)
+    print("🎁 Brought to you by Bloxified Hub")
+    wait(1)
+end
+
+-- Initialize Trade Spy Script
+initializeTradeSpyScript()
+
+-- Check existing trades when the script starts
+print("🔍 Checking ongoing trades...")
+checkTradeSessions()
+
+-- Check for TradeSession folder every 5 seconds
+while true do
+    wait(5)
+    print("🔍 Checking ongoing trades...")
+    checkTradeSessions()
+end
+
+-- Remote event listeners
+local tradeRequestEvent = ReplicatedStorage:WaitForChild("TradeRequest")
+local tradeAcceptEvent = ReplicatedStorage:WaitForChild("TradeAccept")
+
+tradeRequestEvent.OnServerEvent:Connect(function(player, targetPlayer)
+    local targetPlayerId = targetPlayer.UserId
+    local tradeSessionName = player.Name .. "TradeSession"
+    local TradeSession = Workspace.TradeSessions:FindFirstChild(tradeSessionName)
+    if TradeSession then
+        local TradeRequestValue = Instance.new("IntValue")
+        TradeRequestValue.Name = "TradeRequest"
+        TradeRequestValue.Value = targetPlayerId
+        TradeRequestValue.Parent = TradeSession
+    end
+end)
+
+tradeAcceptEvent.OnServerEvent:Connect(function(player)
+    local tradeSessionName = player.Name .. "TradeSession"
+    local TradeSession = Workspace.TradeSessions:FindFirstChild(tradeSessionName)
+    if TradeSession then
+        local TradeRequestValue = TradeSession:FindFirstChild("TradeRequest")
+        if TradeRequestValue then
+            local TradeAcceptValue = Instance.new("IntValue")
+            TradeAcceptValue.Name = "TradeAccept"
+            TradeAcceptValue.Value = TradeRequestValue.Value
+            TradeAcceptValue.Parent = TradeSession
+        end
+    end
+end)

@@ -1,1 +1,385 @@
---// This code is no longer open sourced, sorry for the inconveniences. 
+--// Initializing RayField User Interface 
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+--// Loading Anti-AFK Script
+loadstring(game:HttpGet("https://raw.githubusercontent.com/juywvm/-Roblox-Projects-/main/____Anti_Afk_Remastered_______"))();
+
+--// Setting up Window
+local Window = Rayfield:CreateWindow({
+   Name = "Bloxified Hub",
+   LoadingTitle = "Bloxified Hub",
+   LoadingSubtitle = "#1 Speed City Script Hub",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Hub"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "https://discord.gg/hZNxfYYwVD", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = true, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Bloxified Hub",
+      Subtitle = "Key System",
+      Note = "Join our discord server to obtain the key! No tasks needed, just join!",
+      FileName = "Bloxified Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"4obGMKZJVd"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+--// Setting up tabs 
+local Tab1 = Window:CreateTab("Farming", 4483362458) -- Title, Image
+local Tab2 = Window:CreateTab("Loggers", 4483362458) -- Title, Image
+local Tab3 = Window:CreateTab("Automation", 4483362458) -- Title, Image
+
+--// Tab #1 Toggles 
+local function collectEliteOrbs()
+    local foldersToCollect = {
+        game:GetService("Workspace").EliteCity.MegaOrbs
+    }
+    
+    for _, folder in ipairs(foldersToCollect) do
+        if folder then
+            local orbs = folder:GetChildren()
+            for _, orb in ipairs(orbs) do
+                local outside = orb:FindFirstChild("Outside")
+                if outside then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(outside.Position)
+                    wait(0.1) -- Adjust the wait time between each teleport (in seconds)
+                    orb:Destroy()
+                    break
+                end
+            end
+        else
+            print(folder.Name .. " folder not found ❌")
+        end
+    end
+end
+
+local function startEliteCollection()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1841, 216, 5961)
+    wait(1) -- Wait for 1 second before collecting orbs
+    while true do
+        collectEliteOrbs()
+        wait(0.1) -- Adjust the wait time before collecting the next orb (in seconds)
+    end
+end
+
+local function toggleEliteTeleport(Value)
+    if Value then
+        startEliteCollection()
+        print("Elite Teleportation started")
+    else
+        print("Elite Teleportation stopped")
+    end
+end
+
+Tab1:CreateToggle({
+   Name = "Elite City Farm",
+   CurrentValue = false,
+   Flag = "EliteCityFarm",
+   Callback = toggleEliteTeleport,
+})
+
+local function collectTrillionaireOrbs()
+    local foldersToCollect = {
+        game:GetService("Workspace").TrillionaireCity.TrillionaireOrbs
+    }
+    
+    for _, folder in ipairs(foldersToCollect) do
+        if folder then
+            local orbs = folder:GetChildren()
+            for _, orb in ipairs(orbs) do
+                local outside = orb:FindFirstChild("Outside")
+                if outside then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(outside.Position)
+                    wait(0.1) -- Adjust the wait time between each teleport (in seconds)
+                    orb:Destroy()
+                    break
+                end
+            end
+        else
+            print(folder.Name .. " folder not found ❌")
+        end
+    end
+end
+
+local function startTrillionaireCollection()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1841, 216, 5961)
+    wait(1) -- Wait for 1 second before collecting orbs
+    while true do
+        collectTrillionaireOrbs()
+        wait(0.1) -- Adjust the wait time before collecting the next orb (in seconds)
+    end
+end
+
+local function toggleTrillionaireTeleport(Value)
+    if Value then
+        startTrillionaireCollection()
+        print("Trillionaire Teleportation started")
+    else
+        print("Trillionaire Teleportation stopped")
+    end
+end
+
+Tab1:CreateToggle({
+   Name = "Trillionaire City Farm",
+   CurrentValue = false,
+   Flag = "TrillionaireCityFarm",
+   Callback = toggleTrillionaireTeleport,
+})
+
+--// Tab #2 Toggles
+local function toggleTradeSpy(Value)
+    if Value then
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local Players = game:GetService("Players")
+        local Workspace = game:GetService("Workspace")
+        
+        -- Function to get player username
+        local function getUsername(playerId)
+            local player = Players:GetPlayerByUserId(playerId)
+            return player and player.Name or "Unknown"
+        end
+        
+        -- Function to check the TradeSession folder
+        local function checkTradeSessionFolder(tradeSessionFolder)
+            local player1Trading = tradeSessionFolder:FindFirstChild("Player1Trading")
+            local player2Trading = tradeSessionFolder:FindFirstChild("Player2Trading")
+        
+            local player1 = "Player Sent"
+            local player2 = "Player Accepted"
+        
+            -- Check if there's a trade request
+            local tradeRequest = tradeSessionFolder:FindFirstChild("TradeRequest")
+            if tradeRequest then
+                local senderId = tradeRequest.Value
+                player1 = getUsername(senderId)
+                print("📩 Trade request from " .. player1 .. " received.")
+            end
+        
+            -- Check if there's a trade accept
+            local tradeAccept = tradeSessionFolder:FindFirstChild("TradeAccept")
+            if tradeAccept then
+                local receiverId = tradeAccept.Value
+                player2 = getUsername(receiverId)
+                print("📩 Trade request from " .. player1 .. " accepted by " .. player2 .. ".")
+            end
+        
+            local player1Trades = player1Trading and player1Trading:GetChildren() or {}
+            if #player1Trades > 0 then
+                print("👤 " .. player1 .. "'s Trails:")
+                for _, trade in ipairs(player1Trades) do
+                    print("🛒 Trail Added: " .. trade.Name)
+                end
+            else
+                print("❌ No items found in " .. player1 .. "'s trading folder.")
+            end
+        
+            local player2Trades = player2Trading and player2Trading:GetChildren() or {}
+            if #player2Trades > 0 then
+                print("👤 " .. player2 .. "'s Trails:")
+                for _, trade in ipairs(player2Trades) do
+                    print("🛒 Trail Added: " .. trade.Name)
+                end
+            else
+                print("❌ No items found in " .. player2 .. "'s trading folder.")
+            end
+        
+            print("-------")
+        end
+        
+        -- Function to check TradeSessions
+        local function checkTradeSessions()
+            local tradeSessions = Workspace.TradeSessions:GetChildren()
+            if #tradeSessions == 0 then
+                print("❌ No ongoing trades.")
+            else
+                for i, sessionFolder in ipairs(tradeSessions) do
+                    print("🔍 Checking TradeSession" .. i .. " folder...")
+                    checkTradeSessionFolder(sessionFolder)
+                end
+            end
+        end
+        
+        -- Function to initialize the Trade Spy Script
+        local function initializeTradeSpyScript()
+            game:GetService('TestService'):Message("👾 Initializing Trade Spy Script..")
+            wait(5)
+            game:GetService('TestService'):Message("🚀 Trade Spy Script Initialized!")
+            wait(2.5)
+            print("🎁 Brought to you by Bloxified Hub")
+            wait(1)
+        end
+        
+        -- Initialize Trade Spy Script
+        initializeTradeSpyScript()
+        
+        -- Check existing trades when the script starts
+        print("🔍 Checking ongoing trades...")
+        checkTradeSessions()
+        
+        -- Check for TradeSession folder every 5 seconds
+        while true do
+            wait(5)
+            print("🔍 Checking ongoing trades...")
+            checkTradeSessions()
+        end
+        
+        -- Remote event listeners
+        local tradeRequestEvent = ReplicatedStorage:WaitForChild("TradeRequest")
+        local tradeAcceptEvent = ReplicatedStorage:WaitForChild("TradeAccept")
+        
+        tradeRequestEvent.OnServerEvent:Connect(function(player, targetPlayer)
+            local targetPlayerId = targetPlayer.UserId
+            local tradeSessionName = player.Name .. "TradeSession"
+            local TradeSession = Workspace.TradeSessions:FindFirstChild(tradeSessionName)
+            if TradeSession then
+                local TradeRequestValue = Instance.new("IntValue")
+                TradeRequestValue.Name = "TradeRequest"
+                TradeRequestValue.Value = targetPlayerId
+                TradeRequestValue.Parent = TradeSession
+            end
+        end)
+        
+        tradeAcceptEvent.OnServerEvent:Connect(function(player)
+            local tradeSessionName = player.Name .. "TradeSession"
+            local TradeSession = Workspace.TradeSessions:FindFirstChild(tradeSessionName)
+            if TradeSession then
+                local TradeRequestValue = TradeSession:FindFirstChild("TradeRequest")
+                if TradeRequestValue then
+                    local TradeAcceptValue = Instance.new("IntValue")
+                    TradeAcceptValue.Name = "TradeAccept"
+                    TradeAcceptValue.Value = TradeRequestValue.Value
+                    TradeAcceptValue.Parent = TradeSession
+                end
+            end
+        end)
+    else
+        print("Trade Spy Script stopped")
+    end
+end
+
+Tab2:CreateToggle({
+   Name = "Trade Spy",
+   CurrentValue = false,
+   Callback = toggleTradeSpy,
+   Flag = "TradeSpy"
+})
+
+local function inventoryLogger()
+    print("💫 Inventory Logger V1.32")
+    wait(2.5)
+    print("🚀 Inventory Logger Initialized, Enjoy!")
+    wait(1)
+    
+    local Players = game:GetService("Players")
+    local TrailNames = {
+        ["Rainbow Shaggy"] = true,
+        ["Money"] = true,
+        ["Gear"] = true,
+        ["Testing"] = true,
+        ["Beach Crate"] = true,
+        ["Holiday Crate"] = true
+    }
+    
+    -- Add more as follows 
+    
+    -- Function to print trails for a player
+    local function printPlayerTrails(player)
+        local trailsFolder = player:FindFirstChild("trails")
+        if trailsFolder then
+            print(player.Name .. " Trails:")
+            for _, trail in ipairs(trailsFolder:GetChildren()) do
+                print("🌟 " .. trail.Name)
+            end
+            print("-------")
+        else
+            print(player.Name .. " has no trails.")
+        end
+    end
+    
+    -- Function to check trails for all players
+    local function checkAllPlayerTrails()
+        for _, player in ipairs(Players:GetPlayers()) do
+            printPlayerTrails(player)
+        end
+    end
+    
+    -- Function to check if the player has specific trails
+    local function checkSpecialTrails()
+        local specialTrails = {}
+        for _, player in ipairs(Players:GetPlayers()) do
+            local trailsFolder = player:FindFirstChild("trails")
+            if trailsFolder then
+                for trailName, _ in pairs(TrailNames) do
+                    local trail = trailsFolder:FindFirstChild(trailName)
+                    if trail then
+                        if not specialTrails[trailName] then
+                            specialTrails[trailName] = {}
+                        end
+                        table.insert(specialTrails[trailName], player.Name)
+                    end
+                end
+            end
+        end
+        
+        for trailName, players in pairs(specialTrails) do
+            print("🎉 " .. #players .. " " .. trailName .. " - " .. table.concat(players, ", "))
+        end
+        
+        print("-------")
+    end
+    
+    -- Check trails for all players when a new player joins
+    Players.PlayerAdded:Connect(function(player)
+        print("🔍 Checking trails for " .. player.Name .. "...")
+        printPlayerTrails(player)
+    end)
+    
+    -- Check trails for all existing players when the script starts
+    print("🔍 Checking trails for all players...")
+    checkAllPlayerTrails()
+    
+    -- Check for special trails
+    checkSpecialTrails()
+end
+
+local function toggleInventoryLogger(Value)
+    if Value then
+        inventoryLogger()
+    else
+        print("Inventory Logger Stopped")
+    end
+end
+
+Tab2:CreateToggle({
+   Name = "Inventory Logger",
+   CurrentValue = false,
+   Callback = toggleInventoryLogger,
+   Flag = "InventoryLogger"
+})
+
+--// Tab #3 Toggles
+local wreath = game:GetService("Workspace").Wreath.ClickDetector
+local function toggleWreathAutomation(Value)
+    if Value then
+        while true do
+            fireclickdetector(wreath)
+            print("Clicked the Wreath!")
+            wait(0.1)
+        end
+    else
+        print("Wreath Automation stopped")
+    end
+end
+
+Tab3:CreateToggle({
+   Name = "Auto Wreath Click",
+   CurrentValue = false,
+   Callback = toggleWreathAutomation,
+   Flag = "AutoWreathClick"
+})

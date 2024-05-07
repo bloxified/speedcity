@@ -400,7 +400,7 @@ local function toggleRobloxLoopScript(Value)
             teleportToFirstPoint()
             wait(15)
             teleportToSecondPoint()
-            wait(15)
+            wait(0.1)
         end
     else
         print("Roblox Loop Script Disabled")

@@ -1,3 +1,5 @@
+--// Secure Mode to fix Crashes
+getgenv().SecureMode = true
 --// Initializing RayField User Interface 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
